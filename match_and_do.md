@@ -1,13 +1,15 @@
 Suppose we go with `match` always being an expression, like this:
 
-_expression_ `match` `{`
-    _pattern_ `=>` _expression_ `;`
-    _pattern_ `=>` `break` `;`
-    _pattern_ `=>` `continue` `;`
-    _pattern_ `=>` `return` _expression_ `;`
-    _pattern_ `=>` `return` _braced-init-list_ `;`
-    `// ...`
-`}`
+```rust
+_expression_ match {
+    _pattern_ => _expression_ ;
+    _pattern_ => break ;
+    _pattern_ => continue ;
+    _pattern_ => return _expression_ ;
+    _pattern_ => return _braced-init-list_ ;
+    // ...
+}
+```
 
 Let's say we have statement-expressions available in the form of
 `do` expression our disposal.
