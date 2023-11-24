@@ -15,16 +15,13 @@ return folly::variant_match(
 ```
 
 ```rust
-since.since match do {
-  <QuerySince::Timestamp> let since_ts => {
-    return clock->timestamp >= since_ts.time;
-  }
-  <QuerySince::Clock> let since_clock => {
-    if (since_clock.is_fresh_instance) {
-      return file->exists();
-    }
-    return clock->ticks > since_clock.ticks;
-  }
+return since.since match -> std::optional<bool> {
+  <QuerySince::Timestamp> let since_ts =>
+    clock->timestamp >= since_ts.time;
+  <QuerySince::Clock> let since_clock => 
+    since_clock.is_fresh_instance
+      ? file->exists()
+      : clock->ticks > since_clock.ticks;
 };
 ```
 
@@ -46,15 +43,17 @@ folly::variant_match(
 ```
 
 ```rust
-message match do {
-  <folly::Try<StreamPayload>> let payload => {
+message match {
+  <folly::Try<StreamPayload>> let payload => do {
     terminated = true;
-    payload match do {
-      <Ok> let value => { clientCallback_->onFinalResponse(value) }
-      <Err> let error => { clientCallback_->onFinalResponseError(error); }
-    };
-  }
-  <int64_t> let n => { credits += n; }
+    if (payload.hasValue()) {
+      clientCallback_->onFinalResponse(std::move(payload).value());
+    } else {
+      clientCallback_->onFinalResponseError(
+          std::move(payload).exception());
+    }
+  };
+  <int64_t> let n => do { credits += n; };
 };
 ```
 
@@ -85,15 +84,15 @@ folly::variant_match(
 ```
 
 ```rust
-std::move(maybePub).value() match do {
-  <thrift::Publication> let pub => {
+std::move(maybePub).value() match {
+  <thrift::Publication> let pub => do {
     processPublication(std::move(pub));
     // Compute routes with exponential backoff timer if needed
     if (pendingUpdates_.needsRouteUpdate()) {
       rebuildRoutesDebounced_();
     }
   };
-  <thrift::InitializationEvent> let event => {
+  <thrift::InitializationEvent> let event => do {
     CHECK(event == thrift::InitializationEvent::KVSTORE_SYNCED)
         << fmt::format(
                "Unexpected initialization event: {}",

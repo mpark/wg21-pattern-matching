@@ -169,15 +169,15 @@ while (true) {
 
 ```rust
 while (true) {
-    q.get() match do {
-        ? <fbnl::Link> let link => {
+    q.get() match {
+        ? <fbnl::Link> let link => do {
             processLinkEvent(std::move(link));
         }
-        ? <fbnl::IfAddress> let addr => {
+        ? <fbnl::IfAddress> let addr => do {
             processAddressEvent(std::move(addr));
         }
-        ? <fbnl::Neighbor> _ => {}
-        ? <fbnl::Rule> _ => {}
+        ? <fbnl::Neighbor> _ => do {}
+        ? <fbnl::Rule> _ => do {}
         _ => break;
     };
 }
@@ -216,28 +216,28 @@ return std::visit(
 ```
 
 ```rust
-behavior match do {
-    <Unit> _ => return folly::unit;
-    <FaultInjector::Block> _ => {
+return behavior match -> ImmediateFuture<Unit> {
+    <Unit> _ => folly::unit;
+    <FaultInjector::Block> _ => do {
       XLOG(DBG1) << "block fault hit: " << keyClass << ", " << keyValue;
-      return addBlockedFault(keyClass, keyValue);
-    }
-    <FaultInjector::Delay> let [.error: err, .duration: dur] => {
+      do_return addBlockedFault(keyClass, keyValue);
+    };
+    <FaultInjector::Delay> let [.error: err, .duration: dur] => do {
       XLOG(DBG1) << "delay fault hit: " << keyClass << ", " << keyValue;
-      return err match {
+      do_return err match {
         ? value => folly::futures::sleep(dur)
             .defer([error = value](auto&&) { error.throw_exception(); });
         _ => folly::futures::sleep(dur);
-      }
-    }
-    <folly::exception_wrapper> let error => {
+      };
+    };
+    <folly::exception_wrapper> let error => do {
       XLOG(DBG1) << "error fault hit: " << keyClass << ", " << keyValue;
-      return RV{std::move(error)};
-    }
-    <FaultInjector::Kill> _ => {
+      do_return std::move(error);
+    };
+    <FaultInjector::Kill> _ => do {
       XLOG(DBG1) << "kill fault hit: " << keyClass << ", " << keyValue;
       abort();
-    }
+    };
 };
 ```
 
