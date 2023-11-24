@@ -136,7 +136,7 @@ std::optional<int> f() {
 ```
 
 This relies on each `do`-type being convertible to the `match`-type.
-It starts to suck when the return isn't value-based, convertible like this.
+It starts to suck when the return isn't value-based and convertible like this.
 
 The trailing return type needs to be specified at all 3 levels:
 return type, `match` type, and the `do` type.

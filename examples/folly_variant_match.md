@@ -18,10 +18,12 @@ return folly::variant_match(
 return since.since match -> std::optional<bool> {
   <QuerySince::Timestamp> let since_ts =>
     clock->timestamp >= since_ts.time;
-  <QuerySince::Clock> let since_clock => 
-    since_clock.is_fresh_instance
-      ? file->exists()
-      : clock->ticks > since_clock.ticks;
+  <QuerySince::Clock> let since_clock => do {
+    if (since_clock.is_fresh_instance) {
+      do_return file->exists();
+    }
+    do_return clock->ticks > since_clock.ticks;
+  }
 };
 ```
 
