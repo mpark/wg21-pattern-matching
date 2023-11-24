@@ -1,8 +1,11 @@
 Suppose we go with `match` always being an expression, like this:
 
 _expression_ `match` `{`
-    _pattern1_ `=>` _expression1_ `;`
-    _pattern2_ `=>` _expression2_ `;`
+    _pattern_ `=>` _expression_ `;`
+    _pattern_ `=>` `break` `;`
+    _pattern_ `=>` `continue` `;`
+    _pattern_ `=>` `return` _expression_ `;`
+    _pattern_ `=>` `return` _braced-init-list_ `;`
     `// ...`
 `}`
 
