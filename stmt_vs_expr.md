@@ -154,19 +154,19 @@ std::ostream& f(std::ostream& strm) {
 }
 ```
 
-It ends up being that the "statement version" with just `match` / `do` is better.
+Maybe a concoction of `match do` could be useful:
 
 ```rust
 std::ostream& f(std::ostream& strm) {
     // ...
-    v match {
-        <int> let i => do {
+    return v match do -> auto& {
+        <int> let i => {
             LOG(INFO) << "int";
-            return strm << i;
+            do_return strm << i;
         };
-        <std::string> let s => do {
+        <std::string> let s => {
             LOG(INFO) << "str";
-            return strm << s;
+            do_return strm << s;
         };
     };
 }
