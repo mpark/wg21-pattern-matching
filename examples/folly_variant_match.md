@@ -109,3 +109,72 @@ std::move(maybePub).value() match {
 }
 ```
 
+Example 4: https://github.com/facebook/hhvm/blob/a13020f759b4e74b0f8819ba6ff651606ee47aea/hphp/runtime/ext/thrift/ext_thrift.h#L510-L530
+
+```cpp
+auto responseStr = null_string;
+auto errorStr = null_string;
+uint64_t credits = 0;
+folly::variant_match(
+    creditsOrFinalResponse_,
+    [&](const std::unique_ptr<folly::IOBuf>& finalResponse) {
+      responseStr = ioBufToString(*finalResponse);
+    },
+    [&](const thrift::TClientStreamError& finalResponseError) {
+      if (finalResponseError.errorMsg_) {
+        // Encoded stream exceptions need to be deserialized by generated
+        // code. Returning it as the response string so that it will be
+        // decoded
+        if (finalResponseError.isEncoded_) {
+          responseStr = ioBufToString(*finalResponseError.errorMsg_);
+        } else {
+          errorStr = ioBufToString(*finalResponseError.errorMsg_);
+        }
+      }
+    },
+    [&](const uint64_t& n) { credits = n; });
+```
+
+```rust
+auto responseStr = null_string;
+auto errorStr = null_string;
+uint64_t credits = 0;
+creditsOrFinalResponse_ match {
+  <std::unique_ptr<folly::IOBuf>> let finalResponse => do {
+    responseStr = ioBufToString(*finalResponse);
+  };
+  <thrift::TClientStreamError> (
+    let [.errorMsg_: msg_, .isEncoded_: isEncoded]
+  ) => do {
+    if (msg) {
+      // Encoded stream exceptions need to be deserialized by generated
+      // code. Returning it as the response string so that it will be
+      // decoded
+      (isEncoded ? responseStr : errorStr) = ioBufToString(*msg);
+    }
+  };
+  <uint64_t> let n => do { credits = n; };
+};
+```
+
+Example 5: https://github.com/facebook/fb303/blob/e25ff7e5959dd7624a0e5bc21608d3c949edd269/fb303/ThreadCachedServiceData.h#L679-L685
+
+```cpp
+std::array<std::string, N> subkeyStrings;
+for (size_t i = 0; i < N; ++i) {
+  subkeyStrings[i] = folly::variant_match(
+      subkeyArray[i],
+      [](int64_t v) { return std::to_string(v); },
+      [](std::string const& v) { return v; });
+}
+```
+
+```rust
+std::array<std::string, N> subkeyStrings;
+for (size_t i = 0; i < N; ++i) {
+  subkeyStrings[i] = subkeyArray[i] match {
+    <int64_t> let i => std::to_string(i);
+    <std::string> let v => v;
+  };
+}
+```
