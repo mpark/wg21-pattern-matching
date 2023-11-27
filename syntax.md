@@ -10,10 +10,6 @@ _expr-or-braced-init-list_ match constexpr(opt) _trailing-return-type_(opt)  {
 }
 
 _expr-or-braced-init-list_ match constexpr(opt) _pattern_ _guard_(opt)
-
-_expr-or-braced-init-list_:
-    _expression_
-    _braced-init-list_
 ```
 
 ```rust
