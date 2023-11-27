@@ -30,8 +30,8 @@ _pattern_:
 auto x = e;
 auto [x, y] = e;
 auto [_, y] = e;
-auto [...xs] = e;
-auto [...xs, last] = e;
+auto [...xs] = e; // P1061
+auto [...xs, last] = e; // P1061
 // new syntax
 for (auto const& [k, [v1, v2]] : dict) {
   // ...
