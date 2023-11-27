@@ -30,7 +30,6 @@ at compile-time under `if constexpr (` _dynamic-conditions_ `)` semantics.
 | ------------- | --------------------------------------- | ---------------------------------------- |
 | non-dependent | `static_assert(`_static-conditions_`);` | `static_assert(`_static-conditions_`)`;  |
 |               | `if (`_dynamic-conditions_`)`           | `if constexpr (`_dynamic-conditions_`)`  |
-| ------------- | --------------------------------------- | ---------------------------------------- |
 | depdendent    | `if constexpr (`_static-conditions_`)`  | `if constexpr (`_static-conditions_`)`   |
 |               | `if (`_dynamic-conditions_`)`           | `if constexpr (`_dynamic-conditions_`)`  |
 
