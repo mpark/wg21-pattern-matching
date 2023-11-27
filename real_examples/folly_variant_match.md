@@ -1,3 +1,5 @@
+`folly::variant_match(variant, handlers...)` is essentially just `std::visit(overload(handlers...), variant)`.
+
 Example 1: https://github.com/facebook/watchman/blob/f1dcd80d5b1aba75de505dc15a6f7f41092689f0/watchman/query/since.cpp#L66-L76
 
 ```cpp
@@ -176,5 +178,75 @@ for (size_t i = 0; i < N; ++i) {
     <int64_t> let i => std::to_string(i);
     <std::string> let v => v;
   };
+}
+```
+
+Example 6: https://github.com/facebookincubator/Glean/blob/215465d914cca5b5f8111dd3253b4e9918b7cd98/glean/lang/clang/ast.cpp#L573-L584
+
+```cpp
+  Cxx::Scope scopeRepr(const Scope& scope, clang::AccessSpecifier acs) {
+    return folly::variant_match(
+        scope,
+        [](const GlobalScope&) { return Cxx::Scope::global_(); },
+        [](const NamespaceScope& ns) {
+          return Cxx::Scope::namespace_(ns.fact);
+        },
+        [acs](const ClassScope& cls) {
+          return Cxx::Scope::recordWithAccess(cls.fact, access(acs));
+        },
+        [](const LocalScope& fun) { return Cxx::Scope::local(fun.fact); });
+  }
+```
+
+```rust
+return scope match {
+  <GlobalScope> _ => Cxx::Scope::global_();
+  <NamespaceScope> [.fact: let f] => Cxx::Scope::namespace_(f);
+  <ClassScope> [.fact: let f] => Cxx::Scope::recordWithAccess(f, access(acs));
+  <LocalScope> [.fact: let f] => Cxx::Scope::local(f);
+};
+```
+
+Example 7: https://github.com/facebookincubator/Glean/blob/215465d914cca5b5f8111dd3253b4e9918b7cd98/glean/lang/clang/db.cpp#L211-L229
+
+```cpp
+folly::variant_match(
+    fullSrcRange(r),
+    [&](const SourceRange& range) {
+      file_xref(range, &CrossRef::spans);
+    },
+    [&](const auto& range) {
+      const auto& [expansion, spelling] = range;
+      file_xref(expansion, &CrossRef::expansions);
+      if (!spelling || !spelling->file) {
+        return;
+      }
+      if (spelling->file == expansion.file) {
+        file_xref(*spelling, &CrossRef::spellings);
+      } else {
+        fact<Cxx::SpellingXRef>(
+            Src::FileLocation{spelling->file->fact, spelling->span}, target);
+      }
+    });
+```
+
+```rust
+fullSrcRange(r) match {
+  <SourceRange> let range => do {
+    file_xref(range, &CrossRef::spans);
+  };
+  <auto> let [expansion, spelling] => do {
+    file_xref(expansion, &CrossRef::expansions);
+    spelling match {
+      ? [.file: ? let f, .span: let span] => do {
+        if (f == expansion.file) {
+          file_xref(s, &CrossRef::spellings);
+        } else {
+          fact<Cxx::SpellingXRef>(Src::FileLocation{f.fact, span}, target);
+        }
+      }
+      _ => do {}
+    }
+  }
 }
 ```

@@ -259,3 +259,52 @@ size_t count = merge_in.existing_value match {
     <WideColumns> let columns => columns.size();
 };
 ```
+
+Example 10: https://github.com/facebookincubator/velox/blob/409877a050f6d53dc820d2f32db8bc4ef4bf8d7f/velox/dwio/parquet/writer/arrow/PathInternal.cpp#L629-L656
+
+```cpp
+PathInfo::Node& node = path_info->path[stack_position - stack_base];
+struct {
+  IterationResult operator()(NullableNode& node) {
+    return node.Run(stack_position, stack_position + 1, context);
+  }
+  IterationResult operator()(ListNode& node) {
+    return node.Run(stack_position, stack_position + 1, context);
+  }
+  IterationResult operator()(NullableTerminalNode& node) {
+    return node.Run(*stack_position, context);
+  }
+  IterationResult operator()(FixedSizeListNode& node) {
+    return node.Run(stack_position, stack_position + 1, context);
+  }
+  IterationResult operator()(AllPresentTerminalNode& node) {
+    return node.Run(*stack_position, context);
+  }
+  IterationResult operator()(AllNullsTerminalNode& node) {
+    return node.Run(*stack_position, context);
+  }
+  IterationResult operator()(LargeListNode& node) {
+    return node.Run(stack_position, stack_position + 1, context);
+  }
+  ElementRange* stack_position;
+  PathWriteContext* context;
+} visitor = {stack_position, &context};
+
+IterationResult result = std::visit(visitor, node);
+```
+
+```rust
+IterationResult result = node match {
+  or(
+    <NullableNode> let node,
+    <ListNode> let node,
+    <FixedSizeListNode> let node,
+    <LargeListNode> let node
+  ) => node.Run(stack_position, stack_position + 1, context);
+  or(
+    <NullableTerminalNode> let node,
+    <AllPresentTerminalNode> let node,
+    <AllNullsTerminalNode> let node
+  ) => node.Run(*stack_position, context);
+};
+```

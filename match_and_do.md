@@ -1,14 +1,10 @@
 Suppose we go with `match` always being an expression, like this:
 
 ```rust
-_expression_ match {
-    _pattern_ => _expression_ ;
-    _pattern_ => break ;
-    _pattern_ => continue ;
-    _pattern_ => return _expression_ ;
-    _pattern_ => return _braced-init-list_ ;
-    // ...
-}
+int x = v match {
+    <int> let i => i;
+    <std::string> let s => std::stoi(s);
+};
 ```
 
 Let's say we have statement-expressions available in the form of
@@ -138,8 +134,8 @@ std::optional<int> f() {
 This relies on each `do`-type being convertible to the `match`-type.
 It starts to suck when the return isn't value-based and convertible like this.
 
-The trailing return type needs to be specified at all 3 levels:
-return type, `match` type, and the `do` type.
+The trailing return type may need to be specified at all 3 levels:
+Function return type, `match` type, and the `do` type.
 
 Even with just `auto&`, it gets annoying:
 
