@@ -26,12 +26,10 @@ runtime under `if (` _dynamic-conditions_ `)` semantics.
 If we have a `match constexpr` expression, the dynamic conditions are matched
 at compile-time under `if constexpr (` _dynamic-conditions_ `)` semantics.
 
-|               | `match`                                 | `match constexpr`                        |
-| ------------- | --------------------------------------- | ---------------------------------------- |
-| non-dependent | `static_assert(`_static-conditions_`);` | `static_assert(`_static-conditions_`)`;  |
-|               | `if (`_dynamic-conditions_`)`           | `if constexpr (`_dynamic-conditions_`)`  |
-| depdendent    | `if constexpr (`_static-conditions_`)`  | `if constexpr (`_static-conditions_`)`   |
-|               | `if (`_dynamic-conditions_`)`           | `if constexpr (`_dynamic-conditions_`)`  |
+|               | `match`                                             | `match constexpr`                                             |
+| ------------- | --------------------------------------------------- | ------------------------------------------------------------- |
+| non-dependent | `static_assert(_static-cond_); if (_dynamic-cond_)` | `static_assert(_static-cond_); if constexpr (_dynamic-cond_)` |
+| depdendent    | `if constexpr (_static-cond_) if (_dynamic-cond_)`  | `if constexpr (_static-cond_) if constexpr (_dynamic-cond_)`  |
 
 The optional _guard_ also provides a trailing, free-form static and dynamic conditions.
 They have the semantics of `if constexpr` or `if` depending on which one is used.
