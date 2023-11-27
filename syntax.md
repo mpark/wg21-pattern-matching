@@ -23,7 +23,7 @@ _pattern_:
     _match-pattern_ let _binding-pattern_
 
 _match-pattern_:
-    _                              // wild card
+    _                              // wildcard
     ...                            // only in positional structured bindings
     _constant-expression_          // equality match
     ( _pattern_ )                  // grouping

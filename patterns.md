@@ -13,7 +13,7 @@ _match-pattern_:
     or ( _pattern0_, /* ... */, _patternN_ )  // match one of. short-circuting.
 ```
 
-## Wild Card Pattern
+## Wildcard Pattern
 
 > _
 
