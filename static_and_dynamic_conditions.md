@@ -29,7 +29,7 @@ at compile-time under `if constexpr (` _dynamic-conditions_ `)` semantics.
 |               | `match`                                   | `match constexpr`                                   |
 | ------------- | ------------------------------------------| --------------------------------------------------- |
 | non-dependent | `static_assert(_static_); if (_dynamic_)` | `static_assert(_static_); if constexpr (_dynamic_)` |
-| dependent     | `if constexpr (_static_) if (_dynamic_)`  | `if constexpr (_static_ && _dynamic_)`              |
+| dependent     | `if constexpr (_static_) if (_dynamic_)`  | `if constexpr (_static_) if constexpr (_dynamic_)`  |
 
 The optional _guard_ also provides a trailing, free-form static and dynamic conditions.
 They have the semantics of `if constexpr` or `if` depending on which one is used.
