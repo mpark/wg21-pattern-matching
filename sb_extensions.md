@@ -5,8 +5,8 @@ The following is the syntax for _binding-pattern_:
 ```rust
 _binding-pattern_:
     _identifier_
-    [ _sb-binding-pattern0_, /* ... */, _sb-binding-patternN_ ]
-    [ _designator0_ : _binding-pattern0_, /* ... */, _designatorN_ : _binding-patternN_ ]
+    [ _sb-binding-pattern-0_, /* ... */, _sb-binding-pattern-N_ ]
+    [ _designator-0_ : _binding-pattern-0_, /* ... */, _designator-N_ : _binding-pattern-N_ ]
 
 _sb-binding-pattern_:
     _binding-pattern_

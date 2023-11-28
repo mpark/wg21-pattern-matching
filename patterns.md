@@ -7,9 +7,10 @@ _match-pattern_:
     ( _pattern_ )                  // grouping
     ? _pattern_                    // if (e) then match *e
     < _discriminator_ > _pattern_  // dynamic types, e.g. std::variant / polymorphic types
-    [ _sb-pattern0_, /* ... */, _sb-patternN_ ]  // e.g., [let x, 0]
-    [ _designator0_ : _pattern0_ , /* ... */, _designatorN_ : _patternN_ ]  // e.g., [.foo: let x, .bar: 0]
-    or ( _pattern0_, /* ... */, _patternN_ )  // match one of. short-circuting.
+    [ _sb-pattern-0_, /* ... */, _sb-pattern-N_ ]  // e.g., [let x, 0]
+    [ _designator-0_ : _pattern-0_ , /* ... */, _designator-N_ : _pattern-N_ ]  // e.g., [.foo: let x, .bar: 0]
+    or ( _pattern-0_, /* ... */, _pattern-N_ )  // match one of. short-circuting.
+
 _sb-pattern_:
     _pattern_
     ...
@@ -43,7 +44,7 @@ _sb-pattern_:
 
 ## Structured Bindings Pattern
 
-> `[` _sb-pattern0_`, /* ... */,` _sb-patternN_ `]`
+> `[` _sb-pattern-0_`, /* ... */,` _sb-pattern-N_ `]`
 
 ```rust
 _sb-pattern_:
@@ -83,22 +84,21 @@ structured_bindable<
 
 - Dynamic Condition:
 
-_eI_ matches _sb-patternI_ for all _I_ where _eI_ is an identifier,
-given the following structured binding declaration:
+Given the following structured binding declaration:
 
-`auto&& [` _e0_`, /* ... */,` _eN_ `] = ` _subject_;
+`auto&& [` _e-0_`, /* ... */,` _e-N_ `] = ` _subject_;
 
-where _eI_ is a unique exposition-only identifier if _sb-patternI_ is a _pattern_
-and an ellipsis (`...`) if _sb-patternI_ is an ellipsis (`...`).
+where _e-i_ is a unique exposition-only identifier if _sb-pattern-i_ is a _pattern_
+and an ellipsis (`...`) if _sb-pattern-i_ is an ellipsis (`...`),
 
-> `[` _designator0_ `:` _pattern0_`, /* ... */,` _designatorN_ `:` _patternN_ `]`
+_e-i_ matches _sb-pattern-i_ for all _i_ where _e-i_ is an identifier,
+
+> `[` _designator-0_ `:` _pattern-0_`, /* ... */,` _designator-N_ `:` _pattern-N_ `]`
 
 - Static Condition:
 
-```cpp
-using E = std::remove_reference_t<decltype((_subject_))>;
-```
+Let `E` be `std::remove_reference_t<decltype((_subject_))>`.
 
 `std::is_class_v<E>` is true and `E` has non-static accessible members referred to by _designator_.
 
-- Dynamic Condition: _subject_ _designatorI_ (e.g., `x.foo`) matches _patternI_ for all _I_
+- Dynamic Condition: _subject_ _designator-i_ (e.g., `x.foo`) matches _pattern-i_ for all _i_

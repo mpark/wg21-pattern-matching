@@ -27,9 +27,9 @@ _match-pattern_:
     ( _pattern_ )                       // grouping
     ? _pattern_(opt)                    // optional pattern
     < _discriminator_ > _pattern_(opt)  // dynamic types, e.g. std::variant / polymorphic types
-    [ _sb-pattern0_, /* ... */, _sb-patternN_ ]  // e.g., [let x, 0]
-    [ _designator0_ : _pattern0_, /* ... */, _designatorN_ : _patternN_ ]  // e.g., [.foo: let x, .bar: 0]
-    or ( _pattern0_, /* ... */, _patternN_ )  // match one of. short-circuting.
+    [ _sb-pattern-0_, /* ... */, _sb-pattern-N_ ]  // e.g., [let x, 0]
+    [ _designator-0_ : _pattern-0_, /* ... */, _designator-N_ : _pattern-N_ ]  // e.g., [.foo: let x, .bar: 0]
+    or ( _pattern-0_, /* ... */, _pattern-N_ )  // match one of. short-circuting.
 
 _sb-pattern_:
     _pattern_
@@ -37,8 +37,8 @@ _sb-pattern_:
 
 _binding-pattern_:
     _identifier_
-    [ _sb-binding-pattern0_, /* ... */, _sb-binding-patternN_ ]
-    [ _designator0_ : _binding-pattern0_ , /* ... */, _designatorN_ : _binding-patternN_ ]
+    [ _sb-binding-pattern-0_, /* ... */, _sb-binding-pattern-N_ ]
+    [ _designator-0_ : _binding-pattern-0_ , /* ... */, _designator-N_ : _binding-pattern-N_ ]
 
 _sb-binding-pattern_:
     _binding-pattern_
