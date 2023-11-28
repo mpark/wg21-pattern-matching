@@ -48,7 +48,7 @@ This is still okay.
 
 ```rust
 auto x = v match -> std::optional<int> {
-    <int> _ => std::nullopt;
+    <int> => std::nullopt;
     <std::string> let s => std::stoi(s);
 };
 ```
@@ -59,7 +59,7 @@ auto x = v match -> std::optional<int> {
 std::optional<int> f() {
     // ...
     return v match -> std::optional<int> {
-        <int> _ => std::nullopt;
+        <int> => std::nullopt;
         <std::string> let s => std::stoi(s);
     };
 }
@@ -102,7 +102,7 @@ int f() {
 
 ```rust
 auto x = v match -> std::optional<int> {
-    <int> _ => do {
+    <int> => do {
         LOG(INFO) << "int";
         do_return std::nullopt;
     };
@@ -119,7 +119,7 @@ auto x = v match -> std::optional<int> {
 std::optional<int> f() {
     // ...
     return v match -> std::optional<int> {
-        <int> _ => do {
+        <int> => do {
             LOG(INFO) << "int";
             do_return std::nullopt;
         };
