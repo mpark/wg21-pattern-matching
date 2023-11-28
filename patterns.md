@@ -30,6 +30,13 @@ _sb-pattern_:
 - Static Condition: `std::equality_comparable_with<decltype(_subject_), decltype(_constant-expression_)>`
 - Dynamic Condition: `_subject_ == _constant-expression_`
 
+## Parenthesized Pattern
+
+> `(` _pattern_ `)`
+
+- Static Condition: None
+- Dynamic Condition: _subject_ matches _pattern_
+
 ## Optional Pattern
 
 > `?`
@@ -51,6 +58,8 @@ _sb-pattern_:
     _pattern_
     ...
 ```
+
+- Mandates: There must be at most one ellipsis (...) present.
 
 - Static Condition: Same as structured bindings. Approximately:
 
@@ -91,7 +100,7 @@ Given the following structured binding declaration:
 where _e-i_ is a unique exposition-only identifier if _sb-pattern-i_ is a _pattern_
 and an ellipsis (`...`) if _sb-pattern-i_ is an ellipsis (`...`),
 
-_e-i_ matches _sb-pattern-i_ for all _i_ where _e-i_ is an identifier,
+_subject_ matches if _e-i_ matches _sb-pattern-i_ for all _i_ where _e-i_ is an identifier.
 
 > `[` _designator-0_ `:` _pattern-0_`, /* ... */,` _designator-N_ `:` _pattern-N_ `]`
 
@@ -102,3 +111,11 @@ Let `E` be `std::remove_reference_t<decltype((_subject_))>`.
 `std::is_class_v<E>` is true and `E` has non-static accessible members referred to by _designator_.
 
 - Dynamic Condition: _subject_ _designator-i_ (e.g., `x.foo`) matches _pattern-i_ for all _i_
+
+## Or Pattern
+
+> `or (` _pattern-0_`, /* ... */,` _pattern-N_ `)`
+
+- Mandates: Any bindings introduced must be present in every _pattern_
+- Static Condition: None
+- Dynamic Condition: _subject_ matches one of _pattern-i_, tested left-to-right
