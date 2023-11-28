@@ -39,11 +39,6 @@ _sb-pattern_:
 
 ## Optional Pattern
 
-> `?`
-
-- Static Condition: `_boolean-testable_<decltype(_subject_)>`
-- Dynamic Condition: _subject_ converts to true
-
 > `?` _pattern_
 
 - Static Condition: `_boolean-testable_<decltype(_subject_)> && requires { *_subject_ }`
