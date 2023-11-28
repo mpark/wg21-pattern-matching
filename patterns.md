@@ -26,32 +26,20 @@ _sb-pattern_:
 
 > _constant-expression_
 
-- Static Condition:
-
-```cpp
-std::equality_comparable_with<
-    decltype(_subject_),
-    decltype(_constant-expression_)>
-```
-
+- Static Condition: `std::equality_comparable_with<decltype(_subject_), decltype(_constant-expression_)>`
 - Dynamic Condition: `_subject_ == _constant-expression_`
 
 ## Optional Pattern
 
-> ? _pattern_
+> `?`
 
-- Static Condition:
+- Static Condition: `_boolean-testable_<decltype(_subject_)>`
+- Dynamic Condition: _subject_ converts to true
 
-```cpp
-requires {
-  requires _boolean-testable_<decltype(_subject_)>;
-  { *_subject_ };
-}
-```
+> `?` _pattern_
 
-- Dynamic Condition:
-
-If _subject_ converts to true, then match _pattern_ against `*`_subject_
+- Static Condition: `_boolean-testable_<decltype(_subject_)> && requires { *_subject_ }`
+- Dynamic Condition: _subject_ converts to true and `*`_subject_ matches _pattern_
 
 ## Structured Bindings Pattern
 

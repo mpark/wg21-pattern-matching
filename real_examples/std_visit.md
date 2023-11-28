@@ -14,8 +14,8 @@ return std::visit(
 
 ```rust
 return neighbor_ match {
-    <std::shared_ptr<ManagedVlanRifNeighbor>> _ => cfg::InterfaceType::VLAN;
-    <std::shared_ptr<PortRifNeighbor>> _ => cfg::InterfaceType::SYSTEM_PORT;
+    <std::shared_ptr<ManagedVlanRifNeighbor>> => cfg::InterfaceType::VLAN;
+    <std::shared_ptr<PortRifNeighbor>> => cfg::InterfaceType::SYSTEM_PORT;
 };
 ```
 
@@ -61,7 +61,7 @@ return data.v match -> std::string {
         <devicedata3> [.dev_attributes: let attr],
         <sattr3> let attr
     ) => fmt::format(", attr=({})", formatSattr3(attr).str);
-    <auto> _ => "";
+    <auto> => "";
 };
 ```
 
@@ -99,7 +99,7 @@ std::optional<pid_t> ParentCommit::getInProgressPid() const {
 ```rust
 std::optional<pid_t> ParentCommit::getInProgressPid() const {
   return state_ match -> std::optional<pid_t> {
-    <WorkingCopyParentAndCheckedOutRevision> _ => std::nullopt;
+    <WorkingCopyParentAndCheckedOutRevision> => std::nullopt;
     <auto> [.pid: let pid] => pid;
   };
 }
@@ -176,8 +176,8 @@ while (true) {
         ? <fbnl::IfAddress> let addr => do {
             processAddressEvent(std::move(addr));
         }
-        ? <fbnl::Neighbor> _ => do {}
-        ? <fbnl::Rule> _ => do {}
+        ? <fbnl::Neighbor> => do {}
+        ? <fbnl::Rule> => do {}
         _ => break;
     };
 }
@@ -217,8 +217,8 @@ return std::visit(
 
 ```rust
 return behavior match -> ImmediateFuture<Unit> {
-    <Unit> _ => folly::unit;
-    <FaultInjector::Block> _ => do {
+    <Unit> => folly::unit;
+    <FaultInjector::Block> => do {
       XLOG(DBG1) << "block fault hit: " << keyClass << ", " << keyValue;
       do_return addBlockedFault(keyClass, keyValue);
     };
@@ -234,7 +234,7 @@ return behavior match -> ImmediateFuture<Unit> {
       XLOG(DBG1) << "error fault hit: " << keyClass << ", " << keyValue;
       do_return std::move(error);
     };
-    <FaultInjector::Kill> _ => do {
+    <FaultInjector::Kill> => do {
       XLOG(DBG1) << "kill fault hit: " << keyClass << ", " << keyValue;
       abort();
     };
@@ -254,8 +254,8 @@ std::visit(
 
 ```rust
 size_t count = merge_in.existing_value match {
-    <std::monostate> _ => 0;
-    <Slice> _ => 1;
+    <std::monostate> => 0;
+    <Slice> => 1;
     <WideColumns> let columns => columns.size();
 };
 ```

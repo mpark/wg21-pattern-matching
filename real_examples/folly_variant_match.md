@@ -146,7 +146,7 @@ creditsOrFinalResponse_ match {
     responseStr = ioBufToString(*finalResponse);
   };
   <thrift::TClientStreamError> (
-    let [.errorMsg_: msg_, .isEncoded_: isEncoded]
+    let [.errorMsg_: msg, .isEncoded_: isEncoded]
   ) => do {
     if (msg) {
       // Encoded stream exceptions need to be deserialized by generated
@@ -200,7 +200,7 @@ Example 6: https://github.com/facebookincubator/Glean/blob/215465d914cca5b5f8111
 
 ```rust
 return scope match {
-  <GlobalScope> _ => Cxx::Scope::global_();
+  <GlobalScope> => Cxx::Scope::global_();
   <NamespaceScope> [.fact: let f] => Cxx::Scope::namespace_(f);
   <ClassScope> [.fact: let f] => Cxx::Scope::recordWithAccess(f, access(acs));
   <LocalScope> [.fact: let f] => Cxx::Scope::local(f);

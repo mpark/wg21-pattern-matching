@@ -21,8 +21,8 @@ existing syntax seamlessly as well.
 auto _binding-pattern_ = expr;
 
 _pattern_:
-    let _binding-pattern_
     // ...
+    let _binding-pattern_
 ```
 
 # Examples
@@ -46,8 +46,7 @@ auto [x, [.foo: foo, .bar: bar], z] = e;
 > the quotient and remainder in a structure named `div_t` that contains two
 > integer members __(in unspecified order)__ named `quot` and `rem`.
 >
-> Source: https://linux.die.net/man/3/div
-> Credit: Barry Revzin
+> Source: https://linux.die.net/man/3/div | Credit: Barry Revzin
 
 The same syntax is used for after `let` in a `match` expression.
 

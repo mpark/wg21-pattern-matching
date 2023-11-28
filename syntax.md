@@ -20,14 +20,13 @@ _guard_:
 _pattern_:
     _match-pattern_
     let _binding-pattern_
-    _match-pattern_ let _binding-pattern_
 
 _match-pattern_:
-    _                              // wildcard
-    _constant-expression_          // equality match
-    ( _pattern_ )                  // grouping
-    ? _pattern_                    // if (e) then match *e
-    < _discriminator_ > _pattern_  // dynamic types, e.g. std::variant / polymorphic types
+    _                                   // wildcard
+    _constant-expression_               // equality match
+    ( _pattern_ )                       // grouping
+    ? _pattern_(opt)                    // optional pattern
+    < _discriminator_ > _pattern_(opt)  // dynamic types, e.g. std::variant / polymorphic types
     [ _sb-pattern0_, /* ... */, _sb-patternN_ ]  // e.g., [let x, 0]
     [ _designator0_ : _pattern0_, /* ... */, _designatorN_ : _patternN_ ]  // e.g., [.foo: let x, .bar: 0]
     or ( _pattern0_, /* ... */, _patternN_ )  // match one of. short-circuting.
