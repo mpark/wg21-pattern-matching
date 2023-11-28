@@ -4,11 +4,13 @@ The following is the syntax for _binding-pattern_:
 
 ```rust
 _binding-pattern_:
-    _
     _identifier_
-    ... _identifier_(opt) // only in positional structured bindings
-    [ _binding-pattern0_ , _binding-pattern1_ , /* ... */, _binding-patternN_ ]
-    [ _designator0_ : _binding-pattern0_ , /* ... */, _designatorN_ : _binding-patternN_ ]
+    [ _sb-binding-pattern0_, /* ... */, _sb-binding-patternN_ ]
+    [ _designator0_ : _binding-pattern0_, /* ... */, _designatorN_ : _binding-patternN_ ]
+
+_sb-binding-pattern_:
+    _binding-pattern_
+    ... _identifier_(opt)
 ```
 
 The idea is to use this syntax consistenly between a variable declarations
