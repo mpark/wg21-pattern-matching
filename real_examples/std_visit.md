@@ -225,7 +225,7 @@ return behavior match -> ImmediateFuture<Unit> {
     <FaultInjector::Delay> let [.error: err, .duration: dur] => do {
       XLOG(DBG1) << "delay fault hit: " << keyClass << ", " << keyValue;
       do_return err match {
-        ? value => folly::futures::sleep(dur)
+        ? let value => folly::futures::sleep(dur)
             .defer([error = value](auto&&) { error.throw_exception(); });
         _ => folly::futures::sleep(dur);
       };
