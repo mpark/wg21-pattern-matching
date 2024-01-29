@@ -27,22 +27,22 @@ _sb-pattern_:
 
 > _constant-expression_
 
-- Static Condition: `std::equality_comparable_with<decltype(_subject_), decltype(_constant-expression_)>`
-- Dynamic Condition: `_subject_ == _constant-expression_`
+- Static Condition: `requires { bool(_subject_ == _constant-expression_); }`
+- Dynamic Condition: `_subject_ == _constant-expression_` contextually converts to true
 
 ## Parenthesized Pattern
 
 > `(` _pattern_ `)`
 
-- Static Condition: None
-- Dynamic Condition: _subject_ matches _pattern_
+- Static Condition: Static condition of: _subject_ matches _pattern_
+- Dynamic Condition: Dynamic condition of: _subject_ matches _pattern_
 
 ## Optional Pattern
 
 > `?` _pattern_
 
-- Static Condition: `_boolean-testable_<decltype(_subject_)> && requires { *_subject_ }`
-- Dynamic Condition: _subject_ converts to true and `*`_subject_ matches _pattern_
+- Static Condition: _subject_ is contextually convertible to `bool` plus the static condition of: `*`_subject_ matches _pattern_
+- Dynamic Condition: _subject_ is contextually converts to true and *_subject_ matches _pattern_
 
 ## Structured Bindings Pattern
 
@@ -54,8 +54,7 @@ _sb-pattern_:
     ...
 ```
 
-- Mandates: There must be at most one ellipsis (...) present.
-
+- Mandates: There must be at most one ellipsis (`...`) present.
 - Static Condition: Same as structured bindings. Approximately:
 
 ```cpp
@@ -77,13 +76,11 @@ constexpr bool structured_bindable() {
   }
   return false;
 }
-```
 
-```cpp
 structured_bindable<
     std::remove_reference_t<decltype((_subject_))>,
     /* has an ellipsis (...) */,
-    /* number of identifiers */>();
+    /* number of identifiers */>()
 ```
 
 - Dynamic Condition:
@@ -112,5 +109,5 @@ Let `E` be `std::remove_reference_t<decltype((_subject_))>`.
 > `or (` _pattern-0_`, /* ... */,` _pattern-N_ `)`
 
 - Mandates: Any bindings introduced must be present in every _pattern_
-- Static Condition: None
+- Static Condition: Conjunction of the static conditions of: _subject_ matches _pattern-i_
 - Dynamic Condition: _subject_ matches one of _pattern-i_, tested left-to-right
