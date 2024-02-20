@@ -2,11 +2,11 @@
 
 ```rust
 _match-pattern_:
-    _                              // wildcard
-    _constant-expression_          // equality match
-    ( _pattern_ )                  // grouping
-    ? _pattern_                    // if (e) then match *e
-    < _discriminator_ > _pattern_  // dynamic types, e.g. std::variant / polymorphic types
+    _                            // wildcard
+    _constant-expression_        // equality match
+    ( _pattern_ )                // grouping
+    ? _pattern_                  // if (e) then match *e
+    _discriminator_ : _pattern_  // dynamic types, e.g. std::variant / polymorphic types
     [ _sb-pattern-0_, /* ... */, _sb-pattern-N_ ]  // e.g., [let x, 0]
     [ _designator-0_ : _pattern-0_ , /* ... */, _designator-N_ : _pattern-N_ ]  // e.g., [.foo: let x, .bar: 0]
     or ( _pattern-0_, /* ... */, _pattern-N_ )  // match one of. short-circuting.
@@ -23,7 +23,7 @@ _sb-pattern_:
 - Static Condition: None
 - Dynamic Condition: None
 
-## Expression Pattern
+## Constant Pattern
 
 > _constant-expression_
 

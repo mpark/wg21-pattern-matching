@@ -2,8 +2,8 @@ Suppose we go with `match` always being an expression, like this:
 
 ```rust
 int x = v match {
-    <int> let i => i;
-    <std::string> let s => std::stoi(s);
+    int: let i => i;
+    std::string: let s => std::stoi(s);
 };
 ```
 
@@ -25,8 +25,8 @@ This is the nice case.
 
 ```rust
 int x = v match {
-    <int> let i => i;
-    <std::string> let s => std::stoi(s);
+    int: let i => i;
+    std::string: let s => std::stoi(s);
 };
 ```
 
@@ -36,8 +36,8 @@ int x = v match {
 int f() {
     // ...
     return v match {
-        <int> let i => i;
-        <std::string> let s => std::stoi(s);
+        int: let i => i;
+        std::string: let s => std::stoi(s);
     };
 }
 ```
@@ -48,8 +48,8 @@ This is still okay.
 
 ```rust
 auto x = v match -> std::optional<int> {
-    <int> _ => std::nullopt;
-    <std::string> let s => std::stoi(s);
+    int: _ => std::nullopt;
+    std::string: let s => std::stoi(s);
 };
 ```
 
@@ -59,8 +59,8 @@ auto x = v match -> std::optional<int> {
 std::optional<int> f() {
     // ...
     return v match -> std::optional<int> {
-        <int> _ => std::nullopt;
-        <std::string> let s => std::stoi(s);
+        int: _ => std::nullopt;
+        std::string: let s => std::stoi(s);
     };
 }
 ```
@@ -69,11 +69,11 @@ std::optional<int> f() {
 
 ```rust
 int x = v match {
-    <int> let i => do {
+    int: let i => do {
         LOG(INFO) << "int";
         do_return i;
     };
-    <std::string> let s => do {
+    std::string: let s => do {
         LOG(INFO) << "str";
         do_return std::stoi(s);
     };
@@ -86,11 +86,11 @@ int x = v match {
 int f() {
     // ...
     return v match {
-        <int> let i => do {
+        int: let i => do {
             LOG(INFO) << "int";
             do_return i;
         };
-        <std::string> let s => do {
+        std::string: let s => do {
             LOG(INFO) << "str";
             do_return std::stoi(s);
         };
@@ -102,11 +102,11 @@ int f() {
 
 ```rust
 auto x = v match -> std::optional<int> {
-    <int> _ => do {
+    int: _ => do {
         LOG(INFO) << "int";
         do_return std::nullopt;
     };
-    <std::string> let s => do {
+    std::string: let s => do {
         LOG(INFO) << "str";
         do_return std::stoi(s);
     };
@@ -119,11 +119,11 @@ auto x = v match -> std::optional<int> {
 std::optional<int> f() {
     // ...
     return v match -> std::optional<int> {
-        <int> _ => do {
+        int: _ => do {
             LOG(INFO) << "int";
             do_return std::nullopt;
         };
-        <std::string> let s => do {
+        std::string: let s => do {
             LOG(INFO) << "str";
             do_return std::stoi(s);
         };
@@ -143,11 +143,11 @@ Even with just `auto&`, it gets annoying:
 std::ostream& f(std::ostream& strm) {
     // ...
     return v match -> auto& {
-        <int> let i => do -> auto& {
+        int: let i => do -> auto& {
             LOG(INFO) << "int";
             do_return strm << i;
         };
-        <std::string> let s => do -> auto& {
+        std::string: let s => do -> auto& {
             LOG(INFO) << "str";
             do_return strm << s;
         };
@@ -161,11 +161,11 @@ Maybe a concoction of `match do` could be useful:
 std::ostream& f(std::ostream& strm) {
     // ...
     return v match do -> auto& {
-        <int> let i => {
+        int: let i => {
             LOG(INFO) << "int";
             do_return strm << i;
         };
-        <std::string> let s => {
+        std::string: let s => {
             LOG(INFO) << "str";
             do_return strm << s;
         };

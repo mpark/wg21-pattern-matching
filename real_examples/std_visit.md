@@ -14,8 +14,8 @@ return std::visit(
 
 ```rust
 return neighbor_ match {
-    <std::shared_ptr<ManagedVlanRifNeighbor>> _ => cfg::InterfaceType::VLAN;
-    <std::shared_ptr<PortRifNeighbor>> _ => cfg::InterfaceType::SYSTEM_PORT;
+    std::shared_ptr<ManagedVlanRifNeighbor>: _ => cfg::InterfaceType::VLAN;
+    std::shared_ptr<PortRifNeighbor>: _ => cfg::InterfaceType::SYSTEM_PORT;
 };
 ```
 
@@ -31,8 +31,8 @@ ObjectId hash = std::visit(
 
 ```rust
 ObjectId hash = treeOrTreeEntry.value() match {
-    <std::shared_ptr<const Tree>> let tree => tree->getHash();
-    <TreeEntry> let treeEntry => treeEntry.getHash();
+    std::shared_ptr<const Tree>: let tree => tree->getHash();
+    TreeEntry: let treeEntry => treeEntry.getHash();
 };
 ```
 
@@ -58,10 +58,10 @@ return std::visit(
 ```rust
 return data.v match -> std::string {
     or(
-        <devicedata3> [.dev_attributes: let attr],
-        <sattr3> let attr
+        devicedata3: [.dev_attributes: let attr],
+        sattr3: let attr
     ) => fmt::format(", attr=({})", formatSattr3(attr).str);
-    <auto> _ => "";
+    auto: _ => "";
 };
 ```
 
@@ -74,7 +74,7 @@ const auto& area = std::visit(
 
 ```rust
 const auto& area =
-    kvRequest match -> AreaId { <auto> let request => request.getArea(); };
+    kvRequest match -> AreaId { auto: let request => request.getArea(); };
 ```
 
 Example 5: https://github.com/facebook/sapling/blob/c57f76b9963e050dec8dac7093920f22551b10a1/eden/fs/config/ParentCommit.cpp#L17-L30
@@ -99,8 +99,8 @@ std::optional<pid_t> ParentCommit::getInProgressPid() const {
 ```rust
 std::optional<pid_t> ParentCommit::getInProgressPid() const {
   return state_ match -> std::optional<pid_t> {
-    <WorkingCopyParentAndCheckedOutRevision> _ => std::nullopt;
-    <auto> [.pid: let pid] => pid;
+    WorkingCopyParentAndCheckedOutRevision: _ => std::nullopt;
+    auto: [.pid: let pid] => pid;
   };
 }
 ```
@@ -126,12 +126,12 @@ RootId ParentCommit::getWorkingCopyParent() const {
 ```rust
 RootId ParentCommit::getWorkingCopyParent() const {
   return state_ match {
-    <WorkingCopyParentAndCheckedOutRevision> [.workingCopyParent: let wcp] => wcp;
-    <auto> [.to: let to] => to;
+    WorkingCopyParentAndCheckedOutRevision: [.workingCopyParent: let wcp] => wcp;
+    auto: [.to: let to] => to;
   };
 ```
 
-Example 7: 
+Example 7: https://github.com/facebook/openr/blob/ef09d8ce6bc641a5cfa03cc2660477d90490d410/openr/link-monitor/LinkMonitor.cpp#L363
 
 ```cpp
 struct LinkMonitor::NetlinkEventProcessor {
@@ -169,17 +169,20 @@ while (true) {
 
 ```rust
 while (true) {
-    q.get() match {
-        ? <fbnl::Link> let link => do {
-            processLinkEvent(std::move(link));
-        }
-        ? <fbnl::IfAddress> let addr => do {
-            processAddressEvent(std::move(addr));
-        }
-        ? <fbnl::Neighbor> _ => do {}
-        ? <fbnl::Rule> _ => do {}
-        _ => break;
-    };
+  auto maybeEvent = q.get();
+  if (maybeEvent.hasError()) {
+    break;
+  }
+  std::move(*maybeEvent) match {
+    fbnl::Link: let link => do {
+      processLinkEvent(std::move(link));
+    }
+    fbnl::IfAddress: let addr => do {
+      processAddressEvent(std::move(addr));
+    }
+    fbnl::Neighbor: _ => do {}
+    fbnl::Rule: _ => do {}
+  };
 }
 ```
 
@@ -217,12 +220,12 @@ return std::visit(
 
 ```rust
 return behavior match -> ImmediateFuture<Unit> {
-    <Unit> _ => folly::unit;
-    <FaultInjector::Block> _ => do {
+    Unit: _ => folly::unit;
+    FaultInjector::Block: _ => do {
       XLOG(DBG1) << "block fault hit: " << keyClass << ", " << keyValue;
       do_return addBlockedFault(keyClass, keyValue);
     };
-    <FaultInjector::Delay> let [.error: err, .duration: dur] => do {
+    FaultInjector::Delay: let [.error: err, .duration: dur] => do {
       XLOG(DBG1) << "delay fault hit: " << keyClass << ", " << keyValue;
       do_return err match {
         ? let value => folly::futures::sleep(dur)
@@ -230,11 +233,11 @@ return behavior match -> ImmediateFuture<Unit> {
         _ => folly::futures::sleep(dur);
       };
     };
-    <folly::exception_wrapper> let error => do {
+    folly::exception_wrapper: let error => do {
       XLOG(DBG1) << "error fault hit: " << keyClass << ", " << keyValue;
       do_return std::move(error);
     };
-    <FaultInjector::Kill> _ => do {
+    FaultInjector::Kill: _ => do {
       XLOG(DBG1) << "kill fault hit: " << keyClass << ", " << keyValue;
       abort();
     };
@@ -254,9 +257,9 @@ std::visit(
 
 ```rust
 size_t count = merge_in.existing_value match {
-    <std::monostate> _ => 0;
-    <Slice> _ => 1;
-    <WideColumns> let columns => columns.size();
+    std::monostate: _ => 0;
+    Slice: _ => 1;
+    WideColumns: let columns => columns.size();
 };
 ```
 
@@ -296,15 +299,15 @@ IterationResult result = std::visit(visitor, node);
 ```rust
 IterationResult result = node match {
   or(
-    <NullableNode> let node,
-    <ListNode> let node,
-    <FixedSizeListNode> let node,
-    <LargeListNode> let node
+    NullableNode: let node,
+    ListNode: let node,
+    FixedSizeListNode: let node,
+    LargeListNode: let node
   ) => node.Run(stack_position, stack_position + 1, context);
   or(
-    <NullableTerminalNode> let node,
-    <AllPresentTerminalNode> let node,
-    <AllNullsTerminalNode> let node
+    NullableTerminalNode: let node,
+    AllPresentTerminalNode: let node,
+    AllNullsTerminalNode: let node
   ) => node.Run(*stack_position, context);
 };
 ```

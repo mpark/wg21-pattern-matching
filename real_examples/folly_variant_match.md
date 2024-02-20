@@ -18,9 +18,9 @@ return folly::variant_match(
 
 ```rust
 return since.since match -> std::optional<bool> {
-  <QuerySince::Timestamp> let since_ts =>
+  QuerySince::Timestamp: let since_ts =>
     clock->timestamp >= since_ts.time;
-  <QuerySince::Clock> let since_clock => do {
+  QuerySince::Clock: let since_clock => do {
     if (since_clock.is_fresh_instance) {
       do_return file->exists();
     }
@@ -48,7 +48,7 @@ folly::variant_match(
 
 ```rust
 message match {
-  <folly::Try<StreamPayload>> let payload => do {
+  folly::Try<StreamPayload>: let payload => do {
     terminated = true;
     if (payload.hasValue()) {
       clientCallback_->onFinalResponse(std::move(payload).value());
@@ -57,7 +57,7 @@ message match {
           std::move(payload).exception());
     }
   };
-  <int64_t> let n => do { credits += n; };
+  int64_t: let n => do { credits += n; };
 };
 ```
 
@@ -89,14 +89,14 @@ folly::variant_match(
 
 ```rust
 std::move(maybePub).value() match {
-  <thrift::Publication> let pub => do {
+  thrift::Publication: let pub => do {
     processPublication(std::move(pub));
     // Compute routes with exponential backoff timer if needed
     if (pendingUpdates_.needsRouteUpdate()) {
       rebuildRoutesDebounced_();
     }
   };
-  <thrift::InitializationEvent> let event => do {
+  thrift::InitializationEvent: let event => do {
     CHECK(event == thrift::InitializationEvent::KVSTORE_SYNCED)
         << fmt::format(
                "Unexpected initialization event: {}",
@@ -142,10 +142,10 @@ auto responseStr = null_string;
 auto errorStr = null_string;
 uint64_t credits = 0;
 creditsOrFinalResponse_ match {
-  <std::unique_ptr<folly::IOBuf>> let finalResponse => do {
+  std::unique_ptr<folly::IOBuf>: let finalResponse => do {
     responseStr = ioBufToString(*finalResponse);
   };
-  <thrift::TClientStreamError> (
+  thrift::TClientStreamError: (
     let [.errorMsg_: msg, .isEncoded_: isEncoded]
   ) => do {
     if (msg) {
@@ -155,7 +155,7 @@ creditsOrFinalResponse_ match {
       (isEncoded ? responseStr : errorStr) = ioBufToString(*msg);
     }
   };
-  <uint64_t> let n => do { credits = n; };
+  uint64_t: let n => do { credits = n; };
 };
 ```
 
@@ -175,8 +175,8 @@ for (size_t i = 0; i < N; ++i) {
 std::array<std::string, N> subkeyStrings;
 for (size_t i = 0; i < N; ++i) {
   subkeyStrings[i] = subkeyArray[i] match {
-    <int64_t> let i => std::to_string(i);
-    <std::string> let v => v;
+    int64_t: let i => std::to_string(i);
+    std::string: let v => v;
   };
 }
 ```
@@ -200,10 +200,10 @@ Example 6: https://github.com/facebookincubator/Glean/blob/215465d914cca5b5f8111
 
 ```rust
 return scope match {
-  <GlobalScope> _ => Cxx::Scope::global_();
-  <NamespaceScope> [.fact: let f] => Cxx::Scope::namespace_(f);
-  <ClassScope> [.fact: let f] => Cxx::Scope::recordWithAccess(f, access(acs));
-  <LocalScope> [.fact: let f] => Cxx::Scope::local(f);
+  GlobalScope: _ => Cxx::Scope::global_();
+  NamespaceScope: [.fact: let f] => Cxx::Scope::namespace_(f);
+  ClassScope: [.fact: let f] => Cxx::Scope::recordWithAccess(f, access(acs));
+  LocalScope: [.fact: let f] => Cxx::Scope::local(f);
 };
 ```
 
@@ -232,10 +232,10 @@ folly::variant_match(
 
 ```rust
 fullSrcRange(r) match {
-  <SourceRange> let range => do {
+  SourceRange: let range => do {
     file_xref(range, &CrossRef::spans);
   };
-  <auto> let [expansion, spelling] => do {
+  auto: let [expansion, spelling] => do {
     file_xref(expansion, &CrossRef::expansions);
     spelling match {
       ? [.file: ? let f, .span: let span] => do {
